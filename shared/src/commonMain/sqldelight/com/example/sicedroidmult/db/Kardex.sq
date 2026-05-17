@@ -1,0 +1,32 @@
+-- Equivalente a DaoKardex
+-- Ruta: shared/commonMain/sqldelight/com/example/sicedroidmult/db/Kardex.sq
+
+CREATE TABLE IF NOT EXISTS kardex (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    S3 TEXT,
+    P3 TEXT,
+    A3 TEXT,
+    ClvMat TEXT NOT NULL DEFAULT '',
+    ClvOfiMat TEXT NOT NULL DEFAULT '',
+    Materia TEXT NOT NULL DEFAULT '',
+    Cdts INTEGER NOT NULL DEFAULT 0,
+    Calif INTEGER NOT NULL DEFAULT 0,
+    Acred TEXT NOT NULL DEFAULT '',
+    S1 TEXT,
+    P1 TEXT,
+    A1 TEXT,
+    S2 TEXT,
+    P2 TEXT,
+    A2 TEXT
+);
+
+getKardexSync:
+SELECT * FROM kardex;
+
+insertarKardex:
+INSERT OR REPLACE INTO kardex
+(S3, P3, A3, ClvMat, ClvOfiMat, Materia, Cdts, Calif, Acred, S1, P1, A1, S2, P2, A2)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+eliminarTodo:
+DELETE FROM kardex;
