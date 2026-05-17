@@ -49,8 +49,21 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
+            implementation(libs.ktor.client.okhttp)
+            implementation(libs.android.driver)
         }
         commonMain.dependencies {
+            // Dependencias para la conexion a la red
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+
+            // dependencia para nuestra base de datos
+            implementation(libs.runtime)
+
+            // Dependencia para serializar los datos
+            implementation(libs.kotlinx.serialization.json)
+
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
