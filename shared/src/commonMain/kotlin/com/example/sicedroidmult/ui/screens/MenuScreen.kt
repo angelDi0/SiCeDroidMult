@@ -36,7 +36,7 @@ fun MenuScreen(
             .padding(20.dp)
     ) {
         Text(
-            text = "Panel Académico",
+            text = "Panel Academico",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
