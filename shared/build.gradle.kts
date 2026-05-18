@@ -5,7 +5,7 @@
 // ============================================================
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)          // shared es Library, no Application
+    alias(libs.plugins.androidMultiplatformLibrary) // shared es Library, no Application
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
@@ -13,10 +13,24 @@ plugins {
 }
 
 kotlin {
-    androidTarget()
+    android {
+        namespace = "com.example.sicedroidmult.shared"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+
+    jvm()
+
+    js(IR) {
+        browser()
+    }
+
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
@@ -34,6 +48,7 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
+            implementation(libs.compose.uiToolingPreview)
 
             // ---- Navigation ----
             implementation(libs.navigation.compose)
@@ -45,9 +60,6 @@ kotlin {
             // ---- Ktor (reemplaza Retrofit + OkHttp) ----
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.logging)
-            // HttpCookies plugin — reemplaza AddCookiesInterceptor + ReceivedCookiesInterceptor
-            implementation(libs.ktor.client.plugins)        // incluye HttpCookies
-
             // ---- Serialización (sin cambios) ----
             implementation(libs.kotlinx.serialization.json)
 
@@ -66,24 +78,21 @@ kotlin {
             implementation(libs.sqldelight.android.driver)
         }
 
+        jvmMain.dependencies {
+            implementation(libs.sqldelight.sqlite.driver)
+            implementation(libs.ktor.client.okhttp)
+        }
+
+        jsMain.dependencies {
+            implementation(libs.wrappers.browser)
+        }
+
         iosMain.dependencies {
             // Motor HTTP nativo iOS
             implementation(libs.ktor.client.darwin)
             // Driver SQLite nativo iOS
             implementation(libs.sqldelight.native.driver)
         }
-    }
-}
-
-android {
-    namespace = "com.example.sicedroidmult.shared"
-    compileSdk = 35
-    defaultConfig {
-        minSdk = 26
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 

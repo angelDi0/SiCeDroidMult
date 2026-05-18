@@ -25,6 +25,8 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
+        maven { url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev") }
     }
 }
 
@@ -36,4 +38,3 @@ include(":androidApp")
 include(":desktopApp")
 include(":shared")
 include(":webApp")
-include(":shared:sqldelight")
