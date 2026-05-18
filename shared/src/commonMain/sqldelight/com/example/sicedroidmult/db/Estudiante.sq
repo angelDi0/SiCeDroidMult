@@ -1,0 +1,34 @@
+-- Equivalente a DaoEstudiante (@Dao de Room)
+-- Ruta: shared/commonMain/sqldelight/com/example/sicedroidmult/db/Estudiante.sq
+
+CREATE TABLE IF NOT EXISTS perfil_estudiante (
+    matricula TEXT NOT NULL PRIMARY KEY,
+    password TEXT NOT NULL DEFAULT '',
+    fechaReins TEXT NOT NULL DEFAULT '',
+    modEducativo INTEGER NOT NULL DEFAULT 0,
+    adeudo INTEGER NOT NULL DEFAULT 0,        -- Boolean: 0=false, 1=true
+    urlFoto TEXT NOT NULL DEFAULT '',
+    adeudoDescripcion TEXT NOT NULL DEFAULT '',
+    inscrito INTEGER NOT NULL DEFAULT 0,
+    estatus TEXT NOT NULL DEFAULT '',
+    semActual INTEGER NOT NULL DEFAULT 0,
+    cdtosAcumulados INTEGER NOT NULL DEFAULT 0,
+    cdtosActuales INTEGER NOT NULL DEFAULT 0,
+    especialidad TEXT NOT NULL DEFAULT '',
+    carrera TEXT NOT NULL DEFAULT '',
+    lineamiento INTEGER NOT NULL DEFAULT 0,
+    nombre TEXT NOT NULL DEFAULT '',
+    lastUpdated INTEGER NOT NULL DEFAULT 0
+);
+
+-- Equivalente a: getPerfilSync() / getPerfil()
+getPerfilSync:
+SELECT * FROM perfil_estudiante LIMIT 1;
+
+getPerfilByMatricula:
+SELECT * FROM perfil_estudiante WHERE matricula = :matricula;
+
+-- Equivalente a: insertarDatosPerfil()
+insertarDatosPerfil:
+INSERT OR REPLACE INTO perfil_estudiante VALUES
+(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

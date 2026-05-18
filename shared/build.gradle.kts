@@ -3,13 +3,32 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidMultiplatformLibrary)
+    alias(libs.plugins.androidMultiplatformLibrary) // shared es Library, no Application
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.sqldelight)              // reemplaza ksp + room
     alias(libs.plugins.kotlinxSerialization)
 }
 
 kotlin {
+    android {
+        namespace = "com.example.sicedroidmult.shared"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+
+    jvm()
+
+    js(IR) {
+        browser()
+    }
+
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -19,52 +38,36 @@ kotlin {
             isStatic = true
         }
     }
-    
-    jvm()
-    
-    js {
-        browser()
-    }
-    
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-    }
-    
-    androidLibrary {
-       namespace = "com.example.sicedroidmult.shared"
-       compileSdk = libs.versions.android.compileSdk.get().toInt()
-       minSdk = libs.versions.android.minSdk.get().toInt()
-    
-       compilerOptions {
-           jvmTarget = JvmTarget.JVM_11
-       }
-       androidResources {
-           enable = true
-       }
-       withHostTest {
-           isIncludeAndroidResources = true
-       }
-    }
-    
+
     sourceSets {
-        androidMain.dependencies {
-            implementation(libs.compose.uiToolingPreview)
-            implementation(libs.ktor.client.okhttp)
-            implementation(libs.android.driver)
-        }
         commonMain.dependencies {
-            // Dependencias para la conexion a la red
+            // ---- Compose Multiplatform (reemplaza Jetpack Compose) ----
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(libs.compose.uiToolingPreview)
+
+            // ---- Navigation ----
+            implementation(libs.navigation.compose)
+
+            // ---- ViewModel (mismo API que antes) ----
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.androidx.lifecycle.runtime.compose)
+
+            // ---- Ktor (reemplaza Retrofit + OkHttp) ----
             implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
-
-            // dependencia para nuestra base de datos
-            implementation(libs.runtime)
-
-            // Dependencia para serializar los datos
+            implementation(libs.ktor.client.logging)
+            // ---- Serialización (sin cambios) ----
             implementation(libs.kotlinx.serialization.json)
 
+            // ---- SQLDelight runtime (reemplaza Room) ----
+            implementation(libs.sqldelight.runtime)
+            implementation(libs.sqldelight.coroutines.extensions)
+
+            // ---- Coroutines ----
+            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
@@ -77,9 +80,19 @@ kotlin {
             implementation(libs.navigation.compose)
             implementation(compose.materialIconsExtended)
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
+
+        androidMain.dependencies {
+            // Motor HTTP para Android (OkHttp = mismo que usaba Retrofit)
+            implementation(libs.ktor.client.okhttp)
+            // Driver SQLite para Android (reemplaza room-compiler/ksp)
+            implementation(libs.sqldelight.android.driver)
         }
+
+        jvmMain.dependencies {
+            implementation(libs.sqldelight.sqlite.driver)
+            implementation(libs.ktor.client.okhttp)
+        }
+
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
@@ -96,6 +109,12 @@ kotlin {
     }
 }
 
-dependencies {
-    androidRuntimeClasspath(libs.compose.uiTooling)
+// ---- Configuración SQLDelight ----
+// Genera AppDatabase.kt automáticamente desde tus archivos .sq
+sqldelight {
+    databases {
+        create("AppDatabase") {
+            packageName.set("com.example.sicedroidmult.db")
+        }
+    }
 }

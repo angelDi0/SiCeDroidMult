@@ -48,12 +48,12 @@ class DBLocalSNRepository(
     }
 
     override suspend fun getCalificacionesUnidad(): String {
-        val data = db.calificacionesUnidadQueries.getCalificacionesUnidadSync().executeAsList()
+        val data = db.calificacionesQueries.getCalificacionesUnidadSync().executeAsList()
         return Json.encodeToString(data)
     }
 
     override suspend fun getCalificacionesFinales(): String {
-        val data = db.calificacionFinalQueries.getCalificacionesFinalesSync().executeAsList()
+        val data = db.calificacionesQueries.getCalificacionesFinalesSync().executeAsList()
         return Json.encodeToString(data)
     }
 }

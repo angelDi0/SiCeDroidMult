@@ -41,7 +41,7 @@ suspend fun soapPost(soapAction: String, body: String): String {
 
 // Equivalente a: snApiService.acceso(...)
 suspend fun acceso(matricula: String, password: String): String {
-    return soapPost("accesoLogin", bodyacceso.format(matricula, password))
+    return soapPost("accesoLogin", getBodyAcceso(matricula, password))
 }
 
 // Equivalente a: snApiService.datos_alumno(...)
@@ -56,7 +56,7 @@ suspend fun getCargaAcademica(): String {
 
 // Equivalente a: snApiService.getKardex(...)
 suspend fun getKardex(lineamiento: Int): String {
-    return soapPost("getAllKardexConPromedioByAlumno", bodyKardex.format(lineamiento))
+    return soapPost("getAllKardexConPromedioByAlumno", getBodyKardex(lineamiento))
 }
 
 // Equivalente a: snApiService.getCalificacionesUnidad(...)

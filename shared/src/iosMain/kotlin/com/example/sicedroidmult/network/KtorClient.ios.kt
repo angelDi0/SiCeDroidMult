@@ -1,3 +1,7 @@
+// ============================================================
+// shared/iosMain/kotlin/.../network/KtorClient.ios.kt
+// Motor HTTP: Darwin (NSURLSession nativo de iOS)
+// ============================================================
 package com.example.sicedroidmult.network
 
 import io.ktor.client.*
@@ -8,11 +12,6 @@ actual fun createHttpClient(cookieStorage: CookiesStorage): HttpClient {
     return HttpClient(Darwin) {
         install(HttpCookies) {
             storage = cookieStorage
-        }
-        engine {
-            configureRequest {
-                setAllowsCellularAccess(true)
-            }
         }
     }
 }
