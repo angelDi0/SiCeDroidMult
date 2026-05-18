@@ -80,8 +80,18 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+        jvmMain.dependencies {
+            implementation(libs.ktor.client.java.engine)
+        }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
+            implementation(libs.ktor.client.js.engine)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.js.engine)
         }
     }
 }
