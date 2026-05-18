@@ -1,4 +1,4 @@
-package com.example.sicedroidmult.DB.Entidad
+package com.example.sicedroidmult.db.entidad
 
 import kotlinx.serialization.Serializable
 

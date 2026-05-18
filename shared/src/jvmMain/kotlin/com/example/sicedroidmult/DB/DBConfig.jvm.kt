@@ -1,8 +1,7 @@
-package com.example.sicedroidmult.DB
+package com.example.sicedroidmult.db
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
-import com.example.sicedroidmult.db.AppDatabase
 import java.io.File
 
 actual fun createDriver(): SqlDriver {

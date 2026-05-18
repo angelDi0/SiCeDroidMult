@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.sicedroidmult.DB.Entidad.Estudiante
+import com.example.sicedroidmult.db.entidad.Estudiante
 import com.example.sicedroidmult.viewmodel.SNViewModel
 
 @Composable

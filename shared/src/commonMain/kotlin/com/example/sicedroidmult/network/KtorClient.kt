@@ -1,13 +1,9 @@
-// ============================================================
-// shared/commonMain/kotlin/.../network/KtorClient.kt
-// Reemplaza: Retrofit + OkHttp + AddCookiesInterceptor + ReceivedCookiesInterceptor
-// Los cookies se manejan automáticamente con HttpCookies plugin
-// ============================================================
 package com.example.sicedroidmult.network
 
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.cookies.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -26,45 +22,88 @@ expect fun createCookieStorage(): CookiesStorage
 val cookieStorage: CookiesStorage = createCookieStorage()
 val httpClient: HttpClient = createHttpClient(cookieStorage)
 
-// ============================================================
-// Equivalente a cada método de tu interfaz SICENETWService
-// En vez de @POST/@Headers de Retrofit, usamos funciones suspend
-// ============================================================
-
+/**
+ * Realiza una petición POST de tipo SOAP.
+ */
 suspend fun soapPost(soapAction: String, body: String): String {
-    return httpClient.post("$BASE_URL/ws/wsalumnos.asmx") {
+    val url = "$BASE_URL/ws/wsalumnos.asmx?AspxAutoDetectCookieSupport=1"
+    
+    val response = httpClient.post(url) {
         header("Content-Type", "text/xml;charset=utf-8")
         header("SOAPAction", "http://tempuri.org/$soapAction")
+        header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
         setBody(body)
-    }.bodyAsText()
+    }
+
+    if (response.status == HttpStatusCode.Found || response.status == HttpStatusCode.MovedPermanently) {
+        var nextUrl = response.headers["Location"] ?: url
+        
+        // Corrección para servidores que redirigen erróneamente a localhost o HTTP
+        if (nextUrl.startsWith("http://localhost") || nextUrl.startsWith("/")) {
+            nextUrl = "$BASE_URL/ws/wsalumnos.asmx?AspxAutoDetectCookieSupport=1"
+        } else if (nextUrl.startsWith("http://") && BASE_URL.startsWith("https://")) {
+            nextUrl = nextUrl.replace("http://", "https://")
+        }
+
+        println("DEBUG: Redirigiendo manualmente a $nextUrl manteniendo el POST")
+        
+        return httpClient.post(nextUrl) {
+            header("Content-Type", "text/xml;charset=utf-8")
+            header("SOAPAction", "http://tempuri.org/$soapAction")
+            header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+            setBody(body)
+        }.bodyAsText()
+    }
+
+    return response.bodyAsText()
 }
 
-// Equivalente a: snApiService.acceso(...)
-suspend fun acceso(matricula: String, password: String): String {
-    return soapPost("accesoLogin", getBodyAcceso(matricula, password))
+/**
+ * Equivalente a: snApiService.acceso(...)
+ */
+suspend fun networkAcceso(matricula: String, password: String): String {
+    val body = bodyacceso
+        .replaceFirst("%s", matricula)
+        .replaceFirst("%s", password)
+    return soapPost("accesoLogin", body)
 }
 
-// Equivalente a: snApiService.datos_alumno(...)
-suspend fun datosAlumno(): String {
+/**
+ * Equivalente a: snApiService.datos_alumno(...)
+ */
+suspend fun networkDatosAlumno(): String {
     return soapPost("getAlumnoAcademicoWithLineamiento", bodyPerfil)
 }
 
-// Equivalente a: snApiService.getCargaAcademica(...)
-suspend fun getCargaAcademica(): String {
-    return soapPost("getCargaAcademicaByAlumno", bodyCargaAcademica)
+/**
+ * Equivalente a: snApiService.getCargaAcademica(...)
+ */
+suspend fun networkGetCargaAcademica(): String {
+    return soapPost("getCargaAcademicaByAlumno", CargaAcademicaItem)
 }
 
-// Equivalente a: snApiService.getKardex(...)
-suspend fun getKardex(lineamiento: Int): String {
-    return soapPost("getAllKardexConPromedioByAlumno", getBodyKardex(lineamiento))
+/**
+ * Equivalente a: snApiService.getKardex(...)
+ */
+suspend fun networkGetKardex(lineamiento: Int): String {
+    val body = KardexItem.replace("%d", lineamiento.toString())
+    return soapPost("getAllKardexConPromedioByAlumno", body)
 }
 
-// Equivalente a: snApiService.getCalificacionesUnidad(...)
-suspend fun getCalificacionesUnidad(): String {
-    return soapPost("getCalifUnidadesByAlumno", bodyCalificacionFinal)
+/**
+ * Equivalente a: snApiService.getCalificacionesUnidad(...)
+ */
+suspend fun networkGetCalificacionesUnidad(): String {
+    // Nota: Parece que el XML en bodyacceso para esto se llama CalificacionFinalItem por error?
+    // Revisando bodyacceso.kt: CalificacionFinalItem contiene getCalifUnidadesByAlumno
+    return soapPost("getCalifUnidadesByAlumno", CalificacionFinalItem)
 }
 
-// Equivalente a: snApiService.getCalificacionesFinales(...)
-suspend fun getCalificacionesFinales(): String {
-    return soapPost("getAllCalifFinalByAlumnos", bodyCalificacionesUnidad)
+/**
+ * Equivalente a: snApiService.getCalificacionesFinales(...)
+ */
+suspend fun networkGetCalificacionesFinales(modEducativo: Int): String {
+    // Revisando bodyacceso.kt: CalificacionesUnidadItem contiene getAllCalifFinalByAlumnos
+    val body = CalificacionesUnidadItem.replace("unsignedByte", modEducativo.toString())
+    return soapPost("getAllCalifFinalByAlumnos", body)
 }

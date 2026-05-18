@@ -1,14 +1,11 @@
-// ============================================================
-// shared/androidMain/kotlin/.../network/KtorClient.android.kt
-// Motor HTTP: OkHttp (mismo que usaba Retrofit)
-// CookieStorage: persiste en SharedPreferences (= tus interceptors)
-// ============================================================
 package com.example.sicedroidmult.network
 
 import android.content.Context
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.cookies.*
+
+import io.ktor.client.plugins.logging.*
 
 // El contexto se asigna desde DefaultAppContainer antes de usar el cliente
 lateinit var androidContext: Context
@@ -18,7 +15,17 @@ actual fun createHttpClient(cookieStorage: CookiesStorage): HttpClient {
         install(HttpCookies) {
             storage = cookieStorage
         }
-        // Aquí puedes añadir timeouts, logging, etc.
+        install(Logging) {
+            level = LogLevel.ALL
+            logger = Logger.DEFAULT
+        }
+        // DESACTIVAMOS followRedirects para evitar que convierta POST en GET
+        followRedirects = false
+        engine {
+            config {
+                followRedirects(false)
+            }
+        }
     }
 }
 

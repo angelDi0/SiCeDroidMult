@@ -2,11 +2,10 @@
 // ARCHIVO 3: shared/iosMain/kotlin/.../DB/DBConfig.kt
 // actual iOS — usa NativeSqliteDriver
 // ============================================================
-package com.example.sicedroidmult.DB
+package com.example.sicedroidmult.db
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
-import com.example.sicedroidmult.db.AppDatabase
 
 actual fun createDriver(): SqlDriver {
     return NativeSqliteDriver(

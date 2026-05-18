@@ -14,10 +14,14 @@ import com.example.sicedroidmult.ui.screens.LoginScreen
 import com.example.sicedroidmult.ui.screens.MenuScreen
 import com.example.sicedroidmult.viewmodel.SNViewModel
 
+import com.example.sicedroidmult.data.DefaultAppContainer
+
 @Composable
 fun SNApp() {
     val navController = rememberNavController()
-    val snViewModel: SNViewModel = viewModel { SNViewModel() }
+    // Inicializamos el repositorio desde el contenedor
+    val container = DefaultAppContainer()
+    val snViewModel: SNViewModel = viewModel { SNViewModel(container.snRepository) }
 
     Scaffold { padding ->
         NavHost(
