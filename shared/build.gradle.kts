@@ -81,6 +81,9 @@ kotlin {
         jvmMain.dependencies {
             implementation(libs.ktor.client.java.engine)
             api(libs.sqldelight.sqlite.driver)
+            implementation(libs.ktor.client.okhttp)
+            implementation("app.cash.sqldelight:sqlite-driver:2.0.2")
+            implementation("org.xerial:sqlite-jdbc:3.45.1.0")
         }
 
         jsMain.dependencies {
@@ -103,6 +106,7 @@ sqldelight {
     databases {
         create("AppDatabase") {
             packageName.set("com.example.sicedroidmult.db")
+            srcDirs.setFrom("src/commonMain/sqldelight")
         }
     }
 }

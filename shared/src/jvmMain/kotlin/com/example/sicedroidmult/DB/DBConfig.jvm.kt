@@ -5,7 +5,10 @@ import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import java.io.File
 
 actual fun createDriver(): SqlDriver {
-    val databaseFile = File("sicenet.db")
+    val dbDir = File(System.getProperty("user.home"), ".sicenet")
+    dbDir.mkdirs()  // crea la carpeta si no existe
+
+    val databaseFile = File(dbDir,"sicenet.db")
     val isNew = !databaseFile.exists() || databaseFile.length() == 0L
     val driver: SqlDriver = JdbcSqliteDriver("jdbc:sqlite:${databaseFile.absolutePath}")
     
