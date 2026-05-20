@@ -1,0 +1,47 @@
+-- Equivalente a DaoCalificacionesUnidad
+-- Ruta: shared/commonMain/sqldelight/com/example/sicedroidmult/db/Calificaciones.sq
+
+CREATE TABLE IF NOT EXISTS calificaciones_unidad (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    Observaciones TEXT DEFAULT '',
+    C13 TEXT, C12 TEXT, C11 TEXT, C10 TEXT,
+    C9 TEXT, C8 TEXT, C7 TEXT, C6 TEXT,
+    C5 TEXT, C4 TEXT, C3 TEXT, C2 TEXT, C1 TEXT,
+    UnidadesActivas TEXT DEFAULT '',
+    Materia TEXT DEFAULT '',
+    Grupo TEXT DEFAULT ''
+);
+
+getCalificacionesUnidadSync:
+SELECT * FROM calificaciones_unidad;
+
+insertarCalificacionesUnidad:
+INSERT OR REPLACE INTO calificaciones_unidad
+(Observaciones, C13, C12, C11, C10, C9, C8, C7, C6, C5, C4, C3, C2, C1,
+ UnidadesActivas, Materia, Grupo)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+eliminarTodo:
+DELETE FROM calificaciones_unidad;
+
+-- Equivalente a DaoCalificacionesFinal
+
+CREATE TABLE IF NOT EXISTS calificacion_final (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    calif INTEGER NOT NULL DEFAULT 0,
+    acred TEXT NOT NULL DEFAULT '',
+    grupo TEXT NOT NULL DEFAULT '',
+    materia TEXT NOT NULL DEFAULT '',
+    Observaciones TEXT NOT NULL DEFAULT ''
+);
+
+getCalificacionesFinalesSync:
+SELECT * FROM calificacion_final;
+
+insertarCalificacionFinal:
+INSERT OR REPLACE INTO calificacion_final
+(calif, acred, grupo, materia, Observaciones)
+VALUES (?, ?, ?, ?, ?);
+
+eliminarTodoFinal:
+DELETE FROM calificacion_final;

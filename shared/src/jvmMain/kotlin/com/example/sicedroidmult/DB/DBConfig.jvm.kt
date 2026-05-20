@@ -1,0 +1,20 @@
+package com.example.sicedroidmult.db
+
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
+import java.io.File
+
+actual fun createDriver(): SqlDriver {
+    val dbDir = File(System.getProperty("user.home"), ".sicenet")
+    dbDir.mkdirs()  // crea la carpeta si no existe
+
+    val databaseFile = File(dbDir,"sicenet.db")
+    val isNew = !databaseFile.exists() || databaseFile.length() == 0L
+    val driver: SqlDriver = JdbcSqliteDriver("jdbc:sqlite:${databaseFile.absolutePath}")
+    
+    if (isNew) {
+        AppDatabase.Schema.create(driver)
+    }
+
+    return driver
+}

@@ -1,0 +1,32 @@
+-- Equivalente a DaoCargaAcademica
+-- Ruta: shared/commonMain/sqldelight/com/example/sicedroidmult/db/CargaAcademica.sq
+
+CREATE TABLE IF NOT EXISTS carga_academica (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    Semipresencial TEXT NOT NULL DEFAULT '',
+    Observaciones TEXT NOT NULL DEFAULT '',
+    Docente TEXT NOT NULL DEFAULT '',
+    clvOficial TEXT NOT NULL DEFAULT '',
+    Sabado TEXT NOT NULL DEFAULT '',
+    Viernes TEXT NOT NULL DEFAULT '',
+    Jueves TEXT NOT NULL DEFAULT '',
+    Miercoles TEXT NOT NULL DEFAULT '',
+    Martes TEXT NOT NULL DEFAULT '',
+    Lunes TEXT NOT NULL DEFAULT '',
+    EstadoMateria TEXT NOT NULL DEFAULT '',
+    CreditosMateria INTEGER NOT NULL DEFAULT 0,
+    Materia TEXT NOT NULL DEFAULT '',
+    Grupo TEXT NOT NULL DEFAULT ''
+);
+
+getCargaAcademicaSync:
+SELECT * FROM carga_academica;
+
+insertarCargaAcademica:
+INSERT OR REPLACE INTO carga_academica
+(Semipresencial, Observaciones, Docente, clvOficial, Sabado, Viernes, Jueves,
+ Miercoles, Martes, Lunes, EstadoMateria, CreditosMateria, Materia, Grupo)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+eliminarTodo:
+DELETE FROM carga_academica;
